@@ -1,240 +1,127 @@
 #include <WiFi.h>
+#include <PubSubClient.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <DHT.h>
 #include <math.h>
 
-// ================ WIFI ================
+// ================= WIFI =================
 const char* ssid = "Wokwi-GUEST";
 const char* password = "";
 
-// ================ MQTT ================
-const char* broker = "test.mosquitto.org";
-const int mqttPort = 1883;
+// ================= MQTT =================
+const char* mqtt_server = "test.mosquitto.org";
+const int mqtt_port = 1883;
 
-WiFiClient mqtt;
+WiFiClient espClient;
+PubSubClient client(espClient);
 
-const char* clientId = "ESP32_S5_Telkom";
-const char* topic = "telkom/s5/monitoring";
+char clientId[40];
+char topic[100];
 
-uint16_t packetId = 1;
-
-// ================ SENSOR ================
+// ================= SENSOR =================
 #define DHTPIN 15
 #define DHTTYPE DHT22
 
 DHT dht(DHTPIN, DHTTYPE);
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
-// ================ PENGUJIAN ================
+// ================= PENGUJIAN S4 =================
 const int TOTAL_PESAN = 100;
 const int INTERVAL = 2000;
 const unsigned long TIMEOUT = 5000;
 
+int nomorPesan = 0;
 int berhasil = 0;
 int gagal = 0;
-int nomorPesan = 0;
+
+bool menungguBalasan = false;
+bool pesanDiterima = false;
+
+unsigned long waktuKirim = 0;
+unsigned long waktuPengirimanTerakhir = 0;
 
 float dataRTT[TOTAL_PESAN];
 
-// ================ MQTT HELPER ================
+// ================= CALLBACK MQTT =================
+void callback(char* topicReceived, byte* payload,
+              unsigned int length) {
 
-int bacaByte(unsigned long timeout) {
-  unsigned long mulai = millis();
+  char pesan[501];
 
-  while (!mqtt.available()) {
-    if (!mqtt.connected() || millis() - mulai >= timeout) {
-      return -1;
+  if (length >= sizeof(pesan)) return;
+
+  memcpy(pesan, payload, length);
+  pesan[length] = '\0';
+
+  if (strncmp(pesan, "SEQ:", 4) != 0) return;
+
+  int seq = atoi(pesan + 4);
+
+  if (menungguBalasan && seq == nomorPesan) {
+
+    unsigned long rtt = millis() - waktuKirim;
+
+    dataRTT[berhasil] = rtt;
+    berhasil++;
+
+    pesanDiterima = true;
+    menungguBalasan = false;
+
+    Serial.print("SEQ: ");
+    Serial.print(seq);
+    Serial.print(" | Payload: ");
+    Serial.print(length);
+    Serial.print(" byte | RTT: ");
+    Serial.print(rtt);
+    Serial.println(" ms | BERHASIL");
+  }
+}
+
+// ================= WIFI =================
+void koneksiWiFi() {
+
+  Serial.print("Menghubungkan WiFi");
+
+  WiFi.begin(ssid, password, 6);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  Serial.println("\nWiFi Connected!");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+}
+
+// ================= MQTT =================
+void koneksiMQTT() {
+
+  while (!client.connected()) {
+
+    Serial.print("Menghubungkan MQTT...");
+
+    if (client.connect(clientId)) {
+
+      Serial.println("Connected!");
+
+      client.subscribe(topic, 0);
+
+      Serial.print("Subscribe topic: ");
+      Serial.println(topic);
+
+    } else {
+
+      Serial.print("Gagal, rc=");
+      Serial.println(client.state());
+
+      delay(2000);
     }
-    delay(1);
   }
-
-  return mqtt.read();
 }
 
-int bacaRemainingLength() {
-  int multiplier = 1;
-  int value = 0;
-  int encodedByte;
-
-  do {
-    encodedByte = bacaByte(3000);
-
-    if (encodedByte < 0) return -1;
-
-    value += (encodedByte & 127) * multiplier;
-    multiplier *= 128;
-
-  } while ((encodedByte & 128) != 0);
-
-  return value;
-}
-
-// ================ MQTT CONNECT ================
-
-bool mqttConnect() {
-
-  if (mqtt.connected()) return true;
-
-  mqtt.stop();
-
-  Serial.println("Menghubungkan MQTT...");
-
-  if (!mqtt.connect(broker, mqttPort)) {
-    Serial.println("Koneksi broker gagal");
-    return false;
-  }
-
-  // Menghitung panjang Client ID otomatis
-  int idLength = strlen(clientId);
-  int remainingLength = 10 + 2 + idLength;
-
-  uint8_t packet[100];
-  int pos = 0;
-
-  // Fixed header
-  packet[pos++] = 0x10;
-  packet[pos++] = remainingLength;
-
-  // Protocol Name: MQTT
-  packet[pos++] = 0x00;
-  packet[pos++] = 0x04;
-  packet[pos++] = 'M';
-  packet[pos++] = 'Q';
-  packet[pos++] = 'T';
-  packet[pos++] = 'T';
-
-  // Protocol Level 4
-  packet[pos++] = 0x04;
-
-  // Clean Session
-  packet[pos++] = 0x02;
-
-  // Keep Alive 60 detik
-  packet[pos++] = 0x00;
-  packet[pos++] = 0x3C;
-
-  // Client ID
-  packet[pos++] = idLength >> 8;
-  packet[pos++] = idLength & 0xFF;
-
-  memcpy(packet + pos, clientId, idLength);
-  pos += idLength;
-
-  mqtt.write(packet, pos);
-
-  // Membaca CONNACK
-  int header = bacaByte(5000);
-
-  if (header != 0x20) {
-    Serial.println("Header CONNACK tidak valid");
-    mqtt.stop();
-    return false;
-  }
-
-  int length = bacaRemainingLength();
-
-  if (length != 2) {
-    Serial.println("Panjang CONNACK tidak valid");
-    mqtt.stop();
-    return false;
-  }
-
-  int ack1 = bacaByte(5000);
-  int ack2 = bacaByte(5000);
-
-  if (ack1 != 0 || ack2 != 0) {
-    Serial.print("MQTT ditolak, return code: ");
-    Serial.println(ack2);
-    mqtt.stop();
-    return false;
-  }
-
-  Serial.println("MQTT Connected!");
-  return true;
-}
-
-// ================ PUBLISH QoS 1 ================
-
-bool publishQoS1(const char* payload,
-                  uint16_t id,
-                  unsigned long &rtt) {
-
-  int topicLength = strlen(topic);
-  int payloadLength = strlen(payload);
-
-  int remainingLength =
-    2 + topicLength + 2 + payloadLength;
-
-  uint8_t packet[100];
-  int pos = 0;
-
-  // PUBLISH dengan QoS 1
-  packet[pos++] = 0x32;
-  packet[pos++] = remainingLength;
-
-  // Topic
-  packet[pos++] = topicLength >> 8;
-  packet[pos++] = topicLength & 0xFF;
-
-  memcpy(packet + pos, topic, topicLength);
-  pos += topicLength;
-
-  // Packet Identifier
-  packet[pos++] = id >> 8;
-  packet[pos++] = id & 0xFF;
-
-  // Payload
-  memcpy(packet + pos, payload, payloadLength);
-  pos += payloadLength;
-
-  unsigned long waktuMulai = millis();
-
-  mqtt.write(packet, pos);
-
-  // Menunggu PUBACK
-  while (millis() - waktuMulai < TIMEOUT) {
-
-    if (!mqtt.connected()) return false;
-
-    if (mqtt.available()) {
-
-      int header = bacaByte(100);
-      int length = bacaRemainingLength();
-
-      if (header < 0 || length < 0) return false;
-
-      if ((header & 0xF0) == 0x40 && length == 2) {
-
-        int ackId1 = bacaByte(100);
-        int ackId2 = bacaByte(100);
-
-        if (ackId1 < 0 || ackId2 < 0) return false;
-
-        uint16_t receivedId =
-          ((uint16_t)ackId1 << 8) | ackId2;
-
-        if (receivedId == id) {
-          rtt = millis() - waktuMulai;
-          return true;
-        }
-      }
-
-      else {
-        for (int i = 0; i < length; i++) {
-          if (bacaByte(100) < 0) break;
-        }
-      }
-    }
-
-    delay(1);
-  }
-
-  return false;
-}
-
-// ================ PAYLOAD 20 BYTE ================
-
+// ================= PAYLOAD 500 BYTE =================
 void buatPayload(char* payload, int seq) {
 
   float suhu = dht.readTemperature();
@@ -243,24 +130,24 @@ void buatPayload(char* payload, int seq) {
   if (isnan(suhu)) suhu = 0;
   if (isnan(hum)) hum = 0;
 
-  snprintf(payload, 21,
-           "S%03dT%05.1fH%05.1f",
+  snprintf(payload, 501,
+           "SEQ:%03d|TEMP:%.1f|HUM:%.1f|",
            seq, suhu, hum);
 
   int panjang = strlen(payload);
 
-  while (panjang < 20) {
-    payload[panjang++] = '_';
+  while (panjang < 500) {
+    payload[panjang] = 'A';
+    panjang++;
   }
 
-  payload[20] = '\0';
+  payload[500] = '\0';
 }
 
-// ================ STATISTIK ================
-
+// ================= STATISTIK =================
 void tampilkanStatistik() {
 
-  Serial.println("\n========== HASIL S5 ==========");
+  Serial.println("\n========== HASIL S4 ==========");
 
   Serial.print("Total pesan : ");
   Serial.println(TOTAL_PESAN);
@@ -278,7 +165,7 @@ void tampilkanStatistik() {
   Serial.println(" %");
 
   if (berhasil == 0) {
-    Serial.println("Tidak ada data RTT.");
+    Serial.println("Tidak ada data RTT yang berhasil.");
     return;
   }
 
@@ -292,10 +179,9 @@ void tampilkanStatistik() {
 
   float mean = jumlah / berhasil;
 
-  // Mengurutkan data RTT
+  // Urutkan RTT
   for (int i = 0; i < berhasil - 1; i++) {
     for (int j = i + 1; j < berhasil; j++) {
-
       if (data[i] > data[j]) {
         float temp = data[i];
         data[i] = data[j];
@@ -347,16 +233,14 @@ void tampilkanStatistik() {
 
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("S5 SELESAI");
-
+  lcd.print("S4 SELESAI");
   lcd.setCursor(0, 1);
   lcd.print("PDR:");
   lcd.print(pdr, 1);
   lcd.print("%");
 }
 
-// ================ SETUP ================
-
+// ================= SETUP =================
 void setup() {
 
   Serial.begin(115200);
@@ -368,59 +252,62 @@ void setup() {
 
   dht.begin();
 
-  Serial.println("\nEKSPERIMEN S5 - MQTT QoS 1");
-  Serial.println("Payload : 20 byte");
+  lcd.setCursor(0, 0);
+  lcd.print("Eksperimen S4");
+
+  Serial.println("\nEKSPERIMEN S4 - MQTT QoS 0");
+  Serial.println("Payload : 500 byte");
   Serial.println("Pesan   : 100");
   Serial.println("Interval: 2 detik");
 
-  lcd.setCursor(0, 0);
-  lcd.print("Eksperimen S5");
+  koneksiWiFi();
 
-  WiFi.begin(ssid, password, 6);
+  String mac = WiFi.macAddress();
+  mac.replace(":", "");
 
-  Serial.print("Menghubungkan WiFi");
+  snprintf(clientId, sizeof(clientId),
+           "ESP32_S4_%s", mac.c_str());
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
+  snprintf(topic, sizeof(topic),
+           "telkom/s4/%s/echo", mac.c_str());
 
-  Serial.println("\nWiFi Connected!");
-  Serial.println(WiFi.localIP());
+  client.setServer(mqtt_server, mqtt_port);
+  client.setCallback(callback);
 
-  if (!mqttConnect()) {
-    Serial.println("Gagal memulai MQTT.");
-    return;
-  }
+  // Buffer MQTT harus lebih besar dari 500 byte
+  client.setBufferSize(1024);
+  client.setKeepAlive(60);
 
-  Serial.println("\nMulai pengujian S5...\n");
+  koneksiMQTT();
+
+  Serial.println("\nMulai pengujian S4...\n");
 }
 
-// ================ LOOP ================
-
+// ================= LOOP =================
 void loop() {
 
   if (nomorPesan >= TOTAL_PESAN) {
-
     if (nomorPesan == TOTAL_PESAN) {
       nomorPesan++;
       tampilkanStatistik();
     }
-
     return;
   }
 
-  if (!mqtt.connected()) {
+  if (!client.connected()) {
+    koneksiMQTT();
+  }
 
-    if (!mqttConnect()) {
-      delay(2000);
-      return;
-    }
+  client.loop();
+
+  if (millis() - waktuPengirimanTerakhir < INTERVAL &&
+      nomorPesan > 0) {
+    return;
   }
 
   nomorPesan++;
 
-  char payload[21];
+  char payload[501];
   buatPayload(payload, nomorPesan);
 
   lcd.clear();
@@ -432,35 +319,41 @@ void loop() {
   lcd.print("Hum:");
   lcd.print(dht.readHumidity(), 1);
 
-  unsigned long rtt = 0;
+  pesanDiterima = false;
+  menungguBalasan = true;
 
-  uint16_t currentId = packetId++;
+  waktuKirim = millis();
+  waktuPengirimanTerakhir = waktuKirim;
 
-  if (packetId == 0) packetId = 1;
+  bool terkirim = client.publish(topic, payload, false);
 
-  bool sukses = publishQoS1(payload, currentId, rtt);
+  if (!terkirim) {
 
-  if (sukses) {
-
-    dataRTT[berhasil] = rtt;
-    berhasil++;
-
-    Serial.print("SEQ: ");
-    Serial.print(nomorPesan);
-    Serial.print(" | Payload: 20 byte");
-    Serial.print(" | QoS: 1");
-    Serial.print(" | RTT PUBACK: ");
-    Serial.print(rtt);
-    Serial.println(" ms | BERHASIL");
-
-  } else {
-
+    menungguBalasan = false;
     gagal++;
 
     Serial.print("SEQ: ");
     Serial.print(nomorPesan);
-    Serial.println(" | TIMEOUT / GAGAL");
+    Serial.println(" | GAGAL PUBLISH");
+
+    return;
   }
 
-  delay(INTERVAL);
+  // Menunggu echo maksimal 5 detik
+  while (!pesanDiterima &&
+         millis() - waktuKirim < TIMEOUT) {
+
+    client.loop();
+    delay(1);
+  }
+
+  if (!pesanDiterima) {
+
+    menungguBalasan = false;
+    gagal++;
+
+    Serial.print("SEQ: ");
+    Serial.print(nomorPesan);
+    Serial.println(" | TIMEOUT | GAGAL");
+  }
 }
