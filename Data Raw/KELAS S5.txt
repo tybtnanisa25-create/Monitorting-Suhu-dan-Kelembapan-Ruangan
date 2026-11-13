@@ -1,0 +1,135 @@
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1156
+load:0x40078000,len:11456
+ho 0 tail 12 room 4
+load:0x40080400,len:2972
+entry 0x400805dc
+
+EKSPERIMEN S5 - MQTT QoS 1
+Payload : 20 byte
+Pesan   : 100
+Interval: 2 detik
+Menghubungkan WiFi....
+WiFi Connected!
+10.10.0.2
+Menghubungkan MQTT...
+MQTT Connected!
+
+Mulai pengujian S5...
+
+SEQ: 1 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 163 ms | BERHASIL
+SEQ: 2 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 3 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 4 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 5 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 6 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 7 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 183 ms | BERHASIL
+SEQ: 8 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 9 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 10 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 183 ms | BERHASIL
+SEQ: 11 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 12 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 13 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 14 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 15 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 183 ms | BERHASIL
+SEQ: 16 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 17 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 18 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 19 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 20 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 21 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 22 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 115 ms | BERHASIL
+SEQ: 23 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 216 ms | BERHASIL
+SEQ: 24 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 25 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 26 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 27 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 117 ms | BERHASIL
+SEQ: 28 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 174 ms | BERHASIL
+SEQ: 29 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 30 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 31 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 115 ms | BERHASIL
+SEQ: 32 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 125 ms | BERHASIL
+SEQ: 33 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 34 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 35 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 36 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 147 ms | BERHASIL
+SEQ: 37 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 38 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 39 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 40 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 41 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 42 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 43 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 44 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 45 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 46 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 47 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 48 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 49 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 183 ms | BERHASIL
+SEQ: 50 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 51 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 52 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 53 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 54 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 55 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 56 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 57 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 58 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 59 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 60 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 61 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 62 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 63 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 183 ms | BERHASIL
+SEQ: 64 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 65 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 117 ms | BERHASIL
+SEQ: 66 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 115 ms | BERHASIL
+SEQ: 67 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 68 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 69 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 70 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 183 ms | BERHASIL
+SEQ: 71 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 181 ms | BERHASIL
+SEQ: 72 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 73 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 183 ms | BERHASIL
+SEQ: 74 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 180 ms | BERHASIL
+SEQ: 75 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 76 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 77 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 78 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 79 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 80 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 154 ms | BERHASIL
+SEQ: 81 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 82 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 83 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 84 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 85 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 86 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 87 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 88 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 89 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 90 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 91 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 92 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 93 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 216 ms | BERHASIL
+SEQ: 94 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+SEQ: 95 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 96 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 149 ms | BERHASIL
+SEQ: 97 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 98 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 99 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 182 ms | BERHASIL
+SEQ: 100 | Payload: 20 byte | QoS: 1 | RTT PUBACK: 148 ms | BERHASIL
+
+========== HASIL S5 ==========
+Total pesan : 100
+Berhasil    : 100
+Gagal       : 0
+PDR         : 100.00 %
+RTT Mean    : 169.45 ms
+RTT Median  : 182.00 ms
+RTT Std Dev : 20.59 ms
+RTT P95     : 183.00 ms
+==============================

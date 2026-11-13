@@ -1,0 +1,137 @@
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1156
+load:0x40078000,len:11456
+ho 0 tail 12 room 4
+load:0x40080400,len:2972
+entry 0x400805dc
+
+EKSPERIMEN S4 - MQTT QoS 0
+Payload : 500 byte
+Pesan   : 100
+Interval: 2 detik
+Menghubungkan WiFi....
+WiFi Connected!
+IP Address: 10.10.0.2
+Menghubungkan MQTT...Connected!
+Subscribe topic: telkom/s4/240AC4000110/echo
+
+Mulai pengujian S4...
+
+SEQ: 1 | Payload: 500 byte | RTT: 330 ms | BERHASIL
+SEQ: 2 | Payload: 500 byte | RTT: 312 ms | BERHASIL
+SEQ: 3 | Payload: 500 byte | RTT: 294 ms | BERHASIL
+SEQ: 4 | Payload: 500 byte | RTT: 309 ms | BERHASIL
+SEQ: 5 | Payload: 500 byte | RTT: 324 ms | BERHASIL
+SEQ: 6 | Payload: 500 byte | RTT: 305 ms | BERHASIL
+SEQ: 7 | Payload: 500 byte | RTT: 320 ms | BERHASIL
+SEQ: 8 | Payload: 500 byte | RTT: 301 ms | BERHASIL
+SEQ: 9 | Payload: 500 byte | RTT: 317 ms | BERHASIL
+SEQ: 10 | Payload: 500 byte | RTT: 266 ms | BERHASIL
+SEQ: 11 | Payload: 500 byte | RTT: 314 ms | BERHASIL
+SEQ: 12 | Payload: 500 byte | RTT: 295 ms | BERHASIL
+SEQ: 13 | Payload: 500 byte | RTT: 310 ms | BERHASIL
+SEQ: 14 | Payload: 500 byte | RTT: 309 ms | BERHASIL
+SEQ: 15 | Payload: 500 byte | RTT: 305 ms | BERHASIL
+SEQ: 16 | Payload: 500 byte | RTT: 304 ms | BERHASIL
+SEQ: 17 | Payload: 500 byte | RTT: 302 ms | BERHASIL
+SEQ: 18 | Payload: 500 byte | RTT: 300 ms | BERHASIL
+SEQ: 19 | Payload: 500 byte | RTT: 297 ms | BERHASIL
+SEQ: 20 | Payload: 500 byte | RTT: 298 ms | BERHASIL
+SEQ: 21 | Payload: 500 byte | RTT: 328 ms | BERHASIL
+SEQ: 22 | Payload: 500 byte | RTT: 311 ms | BERHASIL
+SEQ: 23 | Payload: 500 byte | RTT: 308 ms | BERHASIL
+SEQ: 24 | Payload: 500 byte | RTT: 255 ms | BERHASIL
+SEQ: 25 | Payload: 500 byte | RTT: 305 ms | BERHASIL
+SEQ: 26 | Payload: 500 byte | RTT: 305 ms | BERHASIL
+SEQ: 27 | Payload: 500 byte | RTT: 285 ms | BERHASIL
+SEQ: 28 | Payload: 500 byte | RTT: 284 ms | BERHASIL
+SEQ: 29 | Payload: 500 byte | RTT: 299 ms | BERHASIL
+SEQ: 30 | Payload: 500 byte | RTT: 295 ms | BERHASIL
+SEQ: 31 | Payload: 500 byte | RTT: 226 ms | BERHASIL
+SEQ: 32 | Payload: 500 byte | RTT: 310 ms | BERHASIL
+SEQ: 33 | Payload: 500 byte | RTT: 291 ms | BERHASIL
+SEQ: 34 | Payload: 500 byte | RTT: 306 ms | BERHASIL
+SEQ: 35 | Payload: 500 byte | RTT: 322 ms | BERHASIL
+SEQ: 36 | Payload: 500 byte | RTT: 304 ms | BERHASIL
+SEQ: 37 | Payload: 500 byte | RTT: 301 ms | BERHASIL
+SEQ: 38 | Payload: 500 byte | RTT: 297 ms | BERHASIL
+SEQ: 39 | Payload: 500 byte | RTT: 311 ms | BERHASIL
+SEQ: 40 | Payload: 500 byte | RTT: 312 ms | BERHASIL
+SEQ: 41 | Payload: 500 byte | RTT: 307 ms | BERHASIL
+SEQ: 42 | Payload: 500 byte | RTT: 306 ms | BERHASIL
+SEQ: 43 | Payload: 500 byte | RTT: 321 ms | BERHASIL
+SEQ: 44 | Payload: 500 byte | RTT: 304 ms | BERHASIL
+SEQ: 45 | Payload: 500 byte | RTT: 301 ms | BERHASIL
+SEQ: 46 | Payload: 500 byte | RTT: 301 ms | BERHASIL
+SEQ: 47 | Payload: 500 byte | RTT: 300 ms | BERHASIL
+SEQ: 48 | Payload: 500 byte | RTT: 297 ms | BERHASIL
+SEQ: 49 | Payload: 500 byte | RTT: 312 ms | BERHASIL
+SEQ: 50 | Payload: 500 byte | RTT: 295 ms | BERHASIL
+SEQ: 51 | Payload: 500 byte | RTT: 308 ms | BERHASIL
+SEQ: 52 | Payload: 500 byte | RTT: 307 ms | BERHASIL
+SEQ: 53 | Payload: 500 byte | RTT: 322 ms | BERHASIL
+SEQ: 54 | Payload: 500 byte | RTT: 305 ms | BERHASIL
+SEQ: 55 | Payload: 500 byte | RTT: 303 ms | BERHASIL
+SEQ: 56 | Payload: 500 byte | RTT: 300 ms | BERHASIL
+SEQ: 57 | Payload: 500 byte | RTT: 300 ms | BERHASIL
+SEQ: 58 | Payload: 500 byte | RTT: 299 ms | BERHASIL
+SEQ: 59 | Payload: 500 byte | RTT: 297 ms | BERHASIL
+SEQ: 60 | Payload: 500 byte | RTT: 328 ms | BERHASIL
+SEQ: 61 | Payload: 500 byte | RTT: 310 ms | BERHASIL
+SEQ: 62 | Payload: 500 byte | RTT: 309 ms | BERHASIL
+SEQ: 63 | Payload: 500 byte | RTT: 304 ms | BERHASIL
+SEQ: 64 | Payload: 500 byte | RTT: 305 ms | BERHASIL
+SEQ: 65 | Payload: 500 byte | RTT: 303 ms | BERHASIL
+SEQ: 66 | Payload: 500 byte | RTT: 300 ms | BERHASIL
+SEQ: 67 | Payload: 500 byte | RTT: 300 ms | BERHASIL
+SEQ: 68 | Payload: 500 byte | RTT: 299 ms | BERHASIL
+SEQ: 69 | Payload: 500 byte | RTT: 296 ms | BERHASIL
+SEQ: 70 | Payload: 500 byte | RTT: 295 ms | BERHASIL
+SEQ: 71 | Payload: 500 byte | RTT: 308 ms | BERHASIL
+SEQ: 72 | Payload: 500 byte | RTT: 291 ms | BERHASIL
+SEQ: 73 | Payload: 500 byte | RTT: 290 ms | BERHASIL
+SEQ: 74 | Payload: 500 byte | RTT: 305 ms | BERHASIL
+SEQ: 75 | Payload: 500 byte | RTT: 303 ms | BERHASIL
+SEQ: 76 | Payload: 500 byte | RTT: 335 ms | BERHASIL
+SEQ: 77 | Payload: 500 byte | RTT: 284 ms | BERHASIL
+SEQ: 78 | Payload: 500 byte | RTT: 314 ms | BERHASIL
+SEQ: 79 | Payload: 500 byte | RTT: 312 ms | BERHASIL
+SEQ: 80 | Payload: 500 byte | RTT: 294 ms | BERHASIL
+SEQ: 81 | Payload: 500 byte | RTT: 308 ms | BERHASIL
+SEQ: 82 | Payload: 500 byte | RTT: 306 ms | BERHASIL
+SEQ: 83 | Payload: 500 byte | RTT: 322 ms | BERHASIL
+SEQ: 84 | Payload: 500 byte | RTT: 305 ms | BERHASIL
+SEQ: 85 | Payload: 500 byte | RTT: 303 ms | BERHASIL
+SEQ: 86 | Payload: 500 byte | RTT: 302 ms | BERHASIL
+SEQ: 87 | Payload: 500 byte | RTT: 282 ms | BERHASIL
+SEQ: 88 | Payload: 500 byte | RTT: 297 ms | BERHASIL
+SEQ: 89 | Payload: 500 byte | RTT: 295 ms | BERHASIL
+Menghubungkan MQTT...Connected!
+Subscribe topic: telkom/s4/240AC4000110/echo
+SEQ: 90 | Payload: 500 byte | RTT: 314 ms | BERHASIL
+SEQ: 91 | Payload: 500 byte | RTT: 314 ms | BERHASIL
+SEQ: 92 | Payload: 500 byte | RTT: 294 ms | BERHASIL
+SEQ: 93 | Payload: 500 byte | RTT: 311 ms | BERHASIL
+SEQ: 94 | Payload: 500 byte | RTT: 324 ms | BERHASIL
+SEQ: 95 | Payload: 500 byte | RTT: 306 ms | BERHASIL
+SEQ: 96 | Payload: 500 byte | RTT: 289 ms | BERHASIL
+SEQ: 97 | Payload: 500 byte | RTT: 286 ms | BERHASIL
+SEQ: 98 | Payload: 500 byte | RTT: 299 ms | BERHASIL
+SEQ: 99 | Payload: 500 byte | RTT: 298 ms | BERHASIL
+SEQ: 100 | Payload: 500 byte | RTT: 295 ms | BERHASIL
+
+========== HASIL S4 ==========
+Total pesan : 100
+Berhasil    : 100
+Gagal       : 0
+PDR         : 100.00 %
+RTT Mean    : 302.87 ms
+RTT Median  : 304.00 ms
+RTT Std Dev : 14.25 ms
+RTT P95     : 324.00 ms
+==============================
