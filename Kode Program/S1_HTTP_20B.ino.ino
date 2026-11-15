@@ -1,3 +1,4 @@
+
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <Wire.h>
@@ -42,8 +43,12 @@ int gagal = 0;
 unsigned long rttData[100];
 int jumlahRTT = 0;
 
+// Data RSSI
+int rssiData[100];
+int jumlahRSSI = 0;
+
 // =====================================
-// 6. FUNGSI STATISTIK RTT
+// 6. FUNGSI STATISTIK RTT DAN RSSI
 // =====================================
 void hitungStatistik() {
 
@@ -69,7 +74,7 @@ void hitungStatistik() {
     }
   }
 
-  // Mean
+  // Mean RTT
   double total = 0;
 
   for (int i = 0; i < jumlahRTT; i++) {
@@ -78,7 +83,7 @@ void hitungStatistik() {
 
   double mean = total / jumlahRTT;
 
-  // Median
+  // Median RTT
   double median;
 
   if (jumlahRTT % 2 == 0) {
@@ -90,7 +95,7 @@ void hitungStatistik() {
     median = dataUrut[jumlahRTT / 2];
   }
 
-  // Standar deviasi populasi
+  // Standar deviasi RTT
   double jumlahKuadrat = 0;
 
   for (int i = 0; i < jumlahRTT; i++) {
@@ -100,14 +105,14 @@ void hitungStatistik() {
 
   double stdDev = sqrt(jumlahKuadrat / jumlahRTT);
 
-  // P95 (nearest rank)
+  // P95 RTT
   int indexP95 = (int)ceil(0.95 * jumlahRTT) - 1;
   double p95 = dataUrut[indexP95];
 
   // PDR
   double pdr = (double)berhasil / totalPesan * 100.0;
 
-  // Menampilkan hasil
+  // Menampilkan hasil RTT
   Serial.println();
   Serial.println("========== HASIL S1 ==========");
 
@@ -117,28 +122,69 @@ void hitungStatistik() {
   Serial.print("Berhasil          : ");
   Serial.println(berhasil);
 
-  Serial.print("Gagal              : ");
+  Serial.print("Gagal             : ");
   Serial.println(gagal);
 
-  Serial.print("PDR                : ");
+  Serial.print("PDR               : ");
   Serial.print(pdr, 2);
   Serial.println(" %");
 
-  Serial.print("RTT Mean           : ");
+  Serial.print("RTT Mean          : ");
   Serial.print(mean, 2);
   Serial.println(" ms");
 
-  Serial.print("RTT Median         : ");
+  Serial.print("RTT Median        : ");
   Serial.print(median, 2);
   Serial.println(" ms");
 
-  Serial.print("RTT Std Dev        : ");
+  Serial.print("RTT Std Dev       : ");
   Serial.print(stdDev, 2);
   Serial.println(" ms");
 
-  Serial.print("RTT P95             : ");
+  Serial.print("RTT P95            : ");
   Serial.print(p95, 2);
   Serial.println(" ms");
+
+  // Statistik RSSI
+  if (jumlahRSSI > 0) {
+
+    int rssiMin = rssiData[0];
+    int rssiMax = rssiData[0];
+    double totalRSSI = 0;
+
+    for (int i = 0; i < jumlahRSSI; i++) {
+
+      totalRSSI += rssiData[i];
+
+      if (rssiData[i] < rssiMin) {
+        rssiMin = rssiData[i];
+      }
+
+      if (rssiData[i] > rssiMax) {
+        rssiMax = rssiData[i];
+      }
+    }
+
+    double rssiMean = totalRSSI / jumlahRSSI;
+
+    Serial.println("------------------------------");
+    Serial.println("STATISTIK RSSI");
+
+    Serial.print("Jumlah pengukuran : ");
+    Serial.println(jumlahRSSI);
+
+    Serial.print("RSSI Mean         : ");
+    Serial.print(rssiMean, 2);
+    Serial.println(" dBm");
+
+    Serial.print("RSSI Minimum      : ");
+    Serial.print(rssiMin);
+    Serial.println(" dBm");
+
+    Serial.print("RSSI Maximum      : ");
+    Serial.print(rssiMax);
+    Serial.println(" dBm");
+  }
 
   Serial.println("==============================");
 }
@@ -198,8 +244,16 @@ void setup() {
   }
 
   Serial.println("WiFi Connected!");
+
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
+
+  // Pembacaan RSSI awal
+  int rssiAwal = WiFi.RSSI();
+
+  Serial.print("RSSI Awal: ");
+  Serial.print(rssiAwal);
+  Serial.println(" dBm");
 
   lcd.clear();
   lcd.print("WiFi Connected");
@@ -222,12 +276,23 @@ void loop() {
 
   for (int i = 1; i <= totalPesan; i++) {
 
+    // Membaca RSSI setiap iterasi
+    int rssi = WiFi.RSSI();
+
+    rssiData[jumlahRSSI] = rssi;
+    jumlahRSSI++;
+
     // Membaca sensor
     float suhu = dht.readTemperature();
     float hum = dht.readHumidity();
 
     if (isnan(suhu) || isnan(hum)) {
-      Serial.println("Pembacaan DHT22 gagal.");
+      Serial.print("SEQ: ");
+      Serial.print(i);
+      Serial.print(" | RSSI: ");
+      Serial.print(rssi);
+      Serial.println(" dBm | Pembacaan DHT22 gagal.");
+
       gagal++;
       delay(interval);
       continue;
@@ -300,6 +365,10 @@ void loop() {
     Serial.print(" | Payload: ");
     Serial.print(payload.length());
     Serial.print(" byte");
+
+    Serial.print(" | RSSI: ");
+    Serial.print(rssi);
+    Serial.print(" dBm");
 
     Serial.print(" | HTTP: ");
     Serial.print(responseCode);
