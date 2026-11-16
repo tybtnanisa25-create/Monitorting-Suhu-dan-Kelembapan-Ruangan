@@ -1,0 +1,158 @@
+Docs
+
+11121314151617181920212223242526272829303132333435363712345678910
+
+    sendMessage();
+  }
+
+  delay(5);
+}
+
+Simulation
+05:44.383
+82%
+DHT22
+1 GND VCC SDA SCL
+ets Jul 29 2019 12:21:46
+
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3fff0030,len:1156
+load:0x40078000,len:11456
+ho 0 tail 12 room 4
+load:0x40080400,len:2972
+entry 0x400805dc
+Menghubungkan WiFi......
+WiFi Connected!
+Menghubungkan MQTT...
+MQTT Connected!
+Subscribe berhasil
+
+EKSPERIMEN S3 - MQTT QoS 0
+Payload: 20 byte | Pesan: 100 | Interval: 2 detik
+SEQ: 1 | RTT: 253 ms | RSSI: -81 dBm | BERHASIL
+SEQ: 2 | RTT: 243 ms | RSSI: -94 dBm | BERHASIL
+SEQ: 3 | RTT: 263 ms | RSSI: -76 dBm | BERHASIL
+SEQ: 4 | RTT: 330 ms | RSSI: -82 dBm | BERHASIL
+SEQ: 5 | RTT: 298 ms | RSSI: -80 dBm | BERHASIL
+SEQ: 6 | RTT: 273 ms | RSSI: -97 dBm | BERHASIL
+SEQ: 7 | RTT: 278 ms | RSSI: -93 dBm | BERHASIL
+SEQ: 8 | RTT: 298 ms | RSSI: -99 dBm | BERHASIL
+SEQ: 9 | RTT: 293 ms | RSSI: -69 dBm | BERHASIL
+SEQ: 10 | RTT: 247 ms | RSSI: -96 dBm | BERHASIL
+SEQ: 11 | RTT: 300 ms | RSSI: -87 dBm | BERHASIL
+SEQ: 12 | RTT: 308 ms | RSSI: -80 dBm | BERHASIL
+SEQ: 13 | RTT: 248 ms | RSSI: -69 dBm | BERHASIL
+SEQ: 14 | RTT: 243 ms | RSSI: -69 dBm | BERHASIL
+SEQ: 15 | RTT: 248 ms | RSSI: -82 dBm | BERHASIL
+SEQ: 16 | RTT: 243 ms | RSSI: -92 dBm | BERHASIL
+SEQ: 17 | RTT: 378 ms | RSSI: -94 dBm | BERHASIL
+SEQ: 18 | RTT: 319 ms | RSSI: -94 dBm | BERHASIL
+Menghubungkan MQTT...
+MQTT Connected!
+Subscribe berhasil
+SEQ: 19 | RTT: 303 ms | RSSI: -78 dBm | BERHASIL
+SEQ: 20 | RTT: 213 ms | RSSI: -86 dBm | BERHASIL
+SEQ: 21 | RTT: 228 ms | RSSI: -81 dBm | BERHASIL
+SEQ: 22 | RTT: 358 ms | RSSI: -86 dBm | BERHASIL
+SEQ: 23 | RTT: 138 ms | RSSI: -80 dBm | BERHASIL
+SEQ: 24 | RTT: 233 ms | RSSI: -88 dBm | BERHASIL
+SEQ: 25 | RTT: 258 ms | RSSI: -96 dBm | BERHASIL
+SEQ: 26 | RTT: 333 ms | RSSI: -72 dBm | BERHASIL
+SEQ: 27 | RTT: 288 ms | RSSI: -75 dBm | BERHASIL
+SEQ: 28 | RTT: 248 ms | RSSI: -95 dBm | BERHASIL
+SEQ: 29 | RTT: 278 ms | RSSI: -72 dBm | BERHASIL
+SEQ: 30 | RTT: 350 ms | RSSI: -81 dBm | BERHASIL
+SEQ: 31 | RTT: 303 ms | RSSI: -68 dBm | BERHASIL
+SEQ: 32 | RTT: 293 ms | RSSI: -83 dBm | BERHASIL
+SEQ: 33 | RTT: 243 ms | RSSI: -97 dBm | BERHASIL
+SEQ: 34 | RTT: 263 ms | RSSI: -68 dBm | BERHASIL
+SEQ: 35 | RTT: 308 ms | RSSI: -94 dBm | BERHASIL
+SEQ: 36 | RTT: 248 ms | RSSI: -61 dBm | BERHASIL
+SEQ: 37 | RTT: 345 ms | RSSI: -63 dBm | BERHASIL
+SEQ: 38 | RTT: 263 ms | RSSI: -72 dBm | BERHASIL
+SEQ: 39 | RTT: 297 ms | RSSI: -71 dBm | BERHASIL
+SEQ: 40 | RTT: 263 ms | RSSI: -83 dBm | BERHASIL
+SEQ: 41 | RTT: 278 ms | RSSI: -73 dBm | BERHASIL
+SEQ: 42 | RTT: 263 ms | RSSI: -75 dBm | BERHASIL
+SEQ: 43 | RTT: 263 ms | RSSI: -73 dBm | BERHASIL
+SEQ: 44 | RTT: 345 ms | RSSI: -72 dBm | BERHASIL
+SEQ: 45 | RTT: 243 ms | RSSI: -89 dBm | BERHASIL
+SEQ: 46 | RTT: 328 ms | RSSI: -82 dBm | BERHASIL
+SEQ: 47 | RTT: 278 ms | RSSI: -81 dBm | BERHASIL
+SEQ: 48 | RTT: 248 ms | RSSI: -94 dBm | BERHASIL
+SEQ: 49 | RTT: 243 ms | RSSI: -80 dBm | BERHASIL
+SEQ: 50 | RTT: 248 ms | RSSI: -70 dBm | BERHASIL
+SEQ: 51 | RTT: 400 ms | RSSI: -91 dBm | BERHASIL
+SEQ: 52 | RTT: 608 ms | RSSI: -91 dBm | BERHASIL
+SEQ: 53 | RTT: 263 ms | RSSI: -97 dBm | BERHASIL
+SEQ: 54 | RTT: 343 ms | RSSI: -83 dBm | BERHASIL
+SEQ: 55 | RTT: 298 ms | RSSI: -90 dBm | BERHASIL
+SEQ: 56 | RTT: 278 ms | RSSI: -81 dBm | BERHASIL
+SEQ: 57 | RTT: 200 ms | RSSI: -83 dBm | BERHASIL
+SEQ: 58 | RTT: 258 ms | RSSI: -69 dBm | BERHASIL
+SEQ: 59 | RTT: 263 ms | RSSI: -82 dBm | BERHASIL
+SEQ: 60 | RTT: 263 ms | RSSI: -98 dBm | BERHASIL
+SEQ: 61 | RTT: 243 ms | RSSI: -86 dBm | BERHASIL
+SEQ: 62 | RTT: 248 ms | RSSI: -62 dBm | BERHASIL
+SEQ: 63 | RTT: 263 ms | RSSI: -90 dBm | BERHASIL
+SEQ: 64 | RTT: 278 ms | RSSI: -97 dBm | BERHASIL
+SEQ: 65 | RTT: 194 ms | RSSI: -73 dBm | BERHASIL
+SEQ: 66 | RTT: 563 ms | RSSI: -86 dBm | BERHASIL
+SEQ: 67 | RTT: 248 ms | RSSI: -72 dBm | BERHASIL
+SEQ: 68 | RTT: 243 ms | RSSI: -91 dBm | BERHASIL
+SEQ: 69 | RTT: 327 ms | RSSI: -90 dBm | BERHASIL
+SEQ: 70 | RTT: 278 ms | RSSI: -95 dBm | BERHASIL
+SEQ: 71 | RTT: 304 ms | RSSI: -97 dBm | BERHASIL
+SEQ: 72 | RTT: 273 ms | RSSI: -70 dBm | BERHASIL
+SEQ: 73 | RTT: 263 ms | RSSI: -89 dBm | BERHASIL
+SEQ: 74 | RTT: 278 ms | RSSI: -72 dBm | BERHASIL
+SEQ: 75 | RTT: 248 ms | RSSI: -96 dBm | BERHASIL
+SEQ: 76 | RTT: 323 ms | RSSI: -74 dBm | BERHASIL
+SEQ: 77 | RTT: 263 ms | RSSI: -83 dBm | BERHASIL
+SEQ: 78 | RTT: 340 ms | RSSI: -61 dBm | BERHASIL
+SEQ: 79 | RTT: 538 ms | RSSI: -82 dBm | BERHASIL
+SEQ: 80 | RTT: 298 ms | RSSI: -80 dBm | BERHASIL
+SEQ: 81 | RTT: 328 ms | RSSI: -74 dBm | BERHASIL
+SEQ: 82 | RTT: 263 ms | RSSI: -95 dBm | BERHASIL
+SEQ: 83 | RTT: 263 ms | RSSI: -93 dBm | BERHASIL
+SEQ: 84 | RTT: 299 ms | RSSI: -94 dBm | BERHASIL
+SEQ: 85 | RTT: 288 ms | RSSI: -64 dBm | BERHASIL
+SEQ: 86 | RTT: 283 ms | RSSI: -87 dBm | BERHASIL
+SEQ: 87 | RTT: 843 ms | RSSI: -89 dBm | BERHASIL
+SEQ: 88 | RTT: 248 ms | RSSI: -86 dBm | BERHASIL
+SEQ: 89 | RTT: 330 ms | RSSI: -90 dBm | BERHASIL
+SEQ: 90 | RTT: 328 ms | RSSI: -83 dBm | BERHASIL
+SEQ: 91 | RTT: 243 ms | RSSI: -91 dBm | BERHASIL
+SEQ: 92 | RTT: 263 ms | RSSI: -87 dBm | BERHASIL
+SEQ: 93 | RTT: 248 ms | RSSI: -84 dBm | BERHASIL
+SEQ: 94 | RTT: 248 ms | RSSI: -86 dBm | BERHASIL
+SEQ: 95 | RTT: 248 ms | RSSI: -87 dBm | BERHASIL
+SEQ: 96 | RTT: 278 ms | RSSI: -84 dBm | BERHASIL
+SEQ: 97 | RTT: 129 ms | RSSI: -74 dBm | BERHASIL
+SEQ: 98 | RTT: 263 ms | RSSI: -79 dBm | BERHASIL
+SEQ: 99 | RTT: 258 ms | RSSI: -80 dBm | BERHASIL
+SEQ: 100 | RTT: 233 ms | RSSI: -91 dBm | BERHASIL
+
+========== HASIL S3 ==========
+Total pesan       : 100
+Berhasil          : 100
+Gagal             : 0
+PDR               : 100.00 %
+RTT Mean          : 289.25 ms
+RTT Median        : 263.00 ms
+RTT Std Dev       : 86.14 ms
+RTT P95           : 378 ms
+--------------------------------
+STATISTIK RSSI
+Jumlah pengukuran : 100
+RSSI Mean         : -82.82 dBm
+RSSI Minimum      : -99 dBm
+RSSI Maximum      : -61 dBm
+================================
+
+
+
+
