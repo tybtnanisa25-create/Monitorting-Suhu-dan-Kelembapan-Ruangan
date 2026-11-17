@@ -1,7 +1,7 @@
 1. Monitoring Suhu dan Kelembapan Ruangan
-Repository ini merupakan dokumentasi proyek Internet of Things (IoT) untuk monitoring suhu dan kelembapan ruangan menggunakan ESP32 dan sensor DHT11.
+   Repository ini merupakan dokumentasi proyek Internet of Things (IoT) untuk monitoring suhu dan kelembapan ruangan menggunakan ESP32 dan sensor DHT11.
 
-Proyek ini juga mencakup pengujian komunikasi data menggunakan protokol HTTP POST dan MQTT dengan variasi ukuran payload dan Quality of Service (QoS). Pengujian dilakukan untuk mengetahui dan membandingkan performa komunikasi pada setiap skenario.
+  Proyek ini juga mencakup pengujian komunikasi data menggunakan protokol HTTP POST dan MQTT dengan variasi ukuran payload dan Quality of Service (QoS). Pengujian dilakukan untuk             mengetahui dan membandingkan performa komunikasi pada setiap skenario.
 
 2. Tujuan Proyek
 - Merancang sistem monitoring suhu dan kelembapan ruangan menggunakan ESP32 dan DHT11.
@@ -11,7 +11,7 @@ Proyek ini juga mencakup pengujian komunikasi data menggunakan protokol HTTP POS
 - Mengolah dan menganalisis data hasil eksperimen.
 
 3. Perangkat dan Teknologi
-Perangkat dan teknologi yang digunakan dalam proyek ini meliputi:
+   Perangkat dan teknologi yang digunakan dalam proyek ini meliputi:
 
 - ESP32 DevKit V1 sebagai mikrokontroler.
 - Sensor DHT11 untuk membaca suhu dan kelembapan.
@@ -22,7 +22,7 @@ Perangkat dan teknologi yang digunakan dalam proyek ini meliputi:
 - Microsoft Excel untuk pengolahan dan visualisasi data.
 
 4. Skenario Pengujian
-Pengujian komunikasi dilakukan dalam enam skenario:
+   Pengujian komunikasi dilakukan dalam enam skenario:
 
 (1) S1 – HTTP POST (20 Byte)
 Pengiriman data menggunakan protokol HTTP POST dengan ukuran payload 20 byte.
@@ -37,10 +37,10 @@ Pengiriman data menggunakan MQTT dengan QoS 1 dan ukuran payload 20 byte.
 (6) S6 – MQTT QoS 1 (500 Byte)
 Pengiriman data menggunakan MQTT dengan QoS 1 dan ukuran payload 500 byte.
 
-Setiap skenario menggunakan 100 pesan dengan interval pengiriman 2 detik.
+  Setiap skenario menggunakan 100 pesan dengan interval pengiriman 2 detik.
 
 5. Parameter Pengujian
-Parameter yang digunakan untuk menganalisis hasil eksperimen meliputi:
+   Parameter yang digunakan untuk menganalisis hasil eksperimen meliputi:
 
 - Round Trip Time (RTT): waktu komunikasi berdasarkan mekanisme pengukuran pada setiap protokol.
 - Packet Delivery Ratio (PDR): persentase pesan yang berhasil dikirim.
@@ -51,7 +51,7 @@ Parameter yang digunakan untuk menganalisis hasil eksperimen meliputi:
 - RSSI: kekuatan sinyal Wi-Fi yang diterima ESP32.
 
 6. Dokumentasi
-Seluruh data dan hasil eksperimen disimpan dalam repository ini, yang mencakup:
+   Seluruh data dan hasil eksperimen disimpan dalam repository ini, yang mencakup:
 
 - Data mentah hasil pengujian dalam format CSV.
 - Hasil pengolahan data menggunakan Microsoft Excel.
