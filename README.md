@@ -26,14 +26,19 @@
 
 (1) S1 – HTTP POST (20 Byte)
 Pengiriman data menggunakan protokol HTTP POST dengan ukuran payload 20 byte.
+
 (2) S2 – HTTP POST (500 Byte)
 Pengiriman data menggunakan protokol HTTP POST dengan ukuran payload 500 byte.
+
 (3) S3 – MQTT QoS 0 (20 Byte)
 Pengiriman data menggunakan MQTT dengan QoS 0 dan ukuran payload 20 byte.
+
 (4) S4 – MQTT QoS 0 (500 Byte)
 Pengiriman data menggunakan MQTT dengan QoS 0 dan ukuran payload 500 byte.
+
 (5) S5 – MQTT QoS 1 (20 Byte)
 Pengiriman data menggunakan MQTT dengan QoS 1 dan ukuran payload 20 byte.
+
 (6) S6 – MQTT QoS 1 (500 Byte)
 Pengiriman data menggunakan MQTT dengan QoS 1 dan ukuran payload 500 byte.
 
