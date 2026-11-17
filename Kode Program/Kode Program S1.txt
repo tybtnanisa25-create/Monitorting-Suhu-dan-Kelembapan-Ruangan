@@ -1,0 +1,429 @@
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <DHT.h>
+#include <time.h>
+#include <math.h>
+
+// =====================================
+// 1. KONFIGURASI S1
+// =====================================
+#define DHTPIN 15
+#define DHTTYPE DHT22
+
+DHT dht(DHTPIN, DHTTYPE);
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+const char* ssid = "Wokwi-GUEST";
+const char* password = "";
+const char* server = "http://httpbin.org/post";
+
+const int JUMLAH = 100;
+const int PAYLOAD = 20;
+
+const unsigned long JEDA = 2000;
+const unsigned long TIMEOUT = 5000;
+
+unsigned long dataRTT[100];
+int nRTT = 0;
+
+int berhasil = 0;
+int gagal = 0;
+int requestDicoba = 0;
+
+// =====================================
+// 2. MENGAMBIL JAM WIB
+// =====================================
+String jamWIB() {
+  struct tm t;
+
+  if (!getLocalTime(&t, 100)) {
+    return "";
+  }
+
+  char buffer[12];
+  strftime(buffer, sizeof(buffer), "%H:%M:%S", &t);
+
+  return String(buffer);
+}
+
+// =====================================
+// 3. TAMPILAN LCD
+// =====================================
+void tampilLCD(float suhu, float hum) {
+  lcd.setCursor(0, 0);
+  lcd.print("Suhu:");
+  lcd.print(suhu, 1);
+  lcd.print(" C    ");
+
+  lcd.setCursor(0, 1);
+  lcd.print("RH:");
+  lcd.print(hum, 1);
+  lcd.print("%       ");
+}
+
+// =====================================
+// 4. MENCETAK DATA CSV
+// =====================================
+void cetakData(
+  int seq,
+  String jam,
+  bool adaKirim,
+  unsigned long kirim,
+  bool sukses,
+  unsigned long terima,
+  int rssi
+) {
+  Serial.print("S1,");
+  Serial.print(seq);
+  Serial.print(",");
+  Serial.print(jam);
+  Serial.print(",");
+  Serial.print(PAYLOAD);
+  Serial.print(",");
+
+  if (adaKirim) {
+    Serial.print(kirim);
+  }
+
+  Serial.print(",");
+
+  if (sukses) {
+    Serial.print(terima);
+    Serial.print(",");
+    Serial.print(terima - kirim);
+  } else {
+    // Kolom waktu terima dan RTT kosong
+    Serial.print(",");
+  }
+
+  Serial.print(",");
+  Serial.print(sukses ? "BERHASIL" : "GAGAL");
+  Serial.print(",");
+  Serial.println(rssi);
+}
+
+// =====================================
+// 5. STATISTIK RTT
+// =====================================
+void statistik() {
+  Serial.println();
+  Serial.println("# ===== HASIL S1 =====");
+
+  Serial.print("# Total percobaan: ");
+  Serial.println(JUMLAH);
+
+  Serial.print("# HTTP dicoba: ");
+  Serial.println(requestDicoba);
+
+  Serial.print("# Berhasil: ");
+  Serial.println(berhasil);
+
+  Serial.print("# Gagal: ");
+  Serial.println(gagal);
+
+  Serial.print("# Keberhasilan (%): ");
+  Serial.println(100.0 * berhasil / JUMLAH, 2);
+
+  if (nRTT == 0) {
+    Serial.println("# Tidak ada RTT valid");
+    return;
+  }
+
+  unsigned long urut[100];
+  double total = 0;
+
+  for (int i = 0; i < nRTT; i++) {
+    urut[i] = dataRTT[i];
+    total += dataRTT[i];
+  }
+
+  // Mengurutkan RTT
+  for (int i = 1; i < nRTT; i++) {
+    unsigned long x = urut[i];
+    int j = i - 1;
+
+    while (j >= 0 && urut[j] > x) {
+      urut[j + 1] = urut[j];
+      j--;
+    }
+
+    urut[j + 1] = x;
+  }
+
+  // Mean
+  double mean = total / nRTT;
+
+  // Median
+  double median;
+
+  if (nRTT % 2 == 0) {
+    median =
+      ((double)urut[nRTT / 2 - 1] +
+       urut[nRTT / 2]) / 2.0;
+  } else {
+    median = urut[nRTT / 2];
+  }
+
+  // Standar deviasi populasi
+  double jumlahKuadrat = 0;
+
+  for (int i = 0; i < nRTT; i++) {
+    double selisih = (double)dataRTT[i] - mean;
+    jumlahKuadrat += selisih * selisih;
+  }
+
+  double sd = sqrt(jumlahKuadrat / nRTT);
+
+  // P95 nearest-rank
+  int indeksP95 =
+    (int)ceil(0.95 * nRTT) - 1;
+
+  double p95 = urut[indeksP95];
+
+  Serial.print("# Mean RTT (ms): ");
+  Serial.println(mean, 2);
+
+  Serial.print("# Median RTT (ms): ");
+  Serial.println(median, 2);
+
+  Serial.print("# SD RTT (ms): ");
+  Serial.println(sd, 2);
+
+  Serial.print("# P95 RTT (ms): ");
+  Serial.println(p95);
+
+  Serial.print("# RTT Minimum (ms): ");
+  Serial.println(urut[0]);
+
+  Serial.print("# RTT Maksimum (ms): ");
+  Serial.println(urut[nRTT - 1]);
+
+  Serial.println("# =====================");
+}
+
+// =====================================
+// 6. SETUP
+// =====================================
+void setup() {
+  Serial.begin(115200);
+
+  // Inisialisasi LCD
+  Wire.begin(21, 22);
+  lcd.init();
+  lcd.backlight();
+
+  // Inisialisasi DHT22
+  dht.begin();
+
+  lcd.setCursor(0, 0);
+  lcd.print("IoT Experiment");
+
+  lcd.setCursor(0, 1);
+  lcd.print("S1 HTTP POST");
+
+  delay(2000);
+
+  // Sambungkan WiFi
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password, 6);
+
+  lcd.clear();
+  lcd.print("Connecting WiFi");
+
+  unsigned long mulai = millis();
+
+  while (
+    WiFi.status() != WL_CONNECTED &&
+    millis() - mulai < 20000
+  ) {
+    delay(250);
+  }
+
+  if (WiFi.status() != WL_CONNECTED) {
+    lcd.clear();
+    lcd.print("WiFi GAGAL");
+
+    while (true) {
+      delay(1000);
+    }
+  }
+
+  // Sinkronisasi jam WIB
+  configTime(
+    7 * 3600,
+    0,
+    "pool.ntp.org",
+    "time.google.com"
+  );
+
+  struct tm waktu;
+
+  if (!getLocalTime(&waktu, 5000)) {
+    Serial.println("# NTP gagal, jam kosong");
+  }
+
+  lcd.clear();
+  lcd.print("WiFi Connected");
+  delay(1000);
+
+  // Header CSV
+  Serial.println(
+    "skenario,seq,jam_wib,payload_byte,"
+    "t_kirim_ms,t_terima_ms,rtt_ms,"
+    "status,rssi_dbm"
+  );
+}
+
+// =====================================
+// 7. LOOP EKSPERIMEN
+// =====================================
+void loop() {
+
+  for (int seq = 1; seq <= JUMLAH; seq++) {
+
+    int rssi = WiFi.RSSI();
+
+    // Cek koneksi WiFi
+    if (WiFi.status() != WL_CONNECTED) {
+      gagal++;
+
+      cetakData(
+        seq, "", false, 0,
+        false, 0, rssi
+      );
+
+      if (seq < JUMLAH) delay(JEDA);
+      continue;
+    }
+
+    // Membaca DHT22
+    float suhu = dht.readTemperature();
+    float hum = dht.readHumidity();
+
+    if (isnan(suhu) || isnan(hum)) {
+      gagal++;
+
+      cetakData(
+        seq, "", false, 0,
+        false, 0, rssi
+      );
+
+      if (seq < JUMLAH) delay(JEDA);
+      continue;
+    }
+
+    // Menampilkan sensor di LCD
+    tampilLCD(suhu, hum);
+
+    // Membuat payload 20 byte
+    char token[32];
+
+    snprintf(
+      token,
+      sizeof(token),
+      "S%04dT%03dH%03d",
+      seq,
+      (int)round(suhu),
+      (int)round(hum)
+    );
+
+    String payload = String(token);
+
+    while (payload.length() < PAYLOAD) {
+      payload += " ";
+    }
+
+    // Validasi ukuran payload
+    if (payload.length() != PAYLOAD) {
+      gagal++;
+
+      cetakData(
+        seq, "", false, 0,
+        false, 0, rssi
+      );
+
+      if (seq < JUMLAH) delay(JEDA);
+      continue;
+    }
+
+    HTTPClient http;
+
+    http.begin(server);
+    http.addHeader("Content-Type", "text/plain");
+    http.setTimeout(TIMEOUT);
+
+    String jam = jamWIB();
+
+    // Waktu pengiriman
+    unsigned long tKirim = millis();
+
+    requestDicoba++;
+
+    // HTTP POST
+    int kode = http.POST(
+      (uint8_t*)payload.c_str(),
+      payload.length()
+    );
+
+    String respons = "";
+
+    if (kode > 0) {
+      respons = http.getString();
+    }
+
+    // Waktu setelah respons diterima
+    unsigned long tTerima = millis();
+
+    unsigned long rtt = tTerima - tKirim;
+
+    // Validasi respons
+    bool sukses =
+      kode >= 200 &&
+      kode < 300 &&
+      respons.indexOf(token) >= 0 &&
+      rtt <= TIMEOUT;
+
+    if (sukses) {
+      berhasil++;
+      dataRTT[nRTT++] = rtt;
+    } else {
+      gagal++;
+    }
+
+    cetakData(
+      seq, jam, true, tKirim,
+      sukses, tTerima, rssi
+    );
+
+    http.end();
+
+    // Jeda 2 detik setelah transaksi
+    if (seq < JUMLAH) {
+      delay(JEDA);
+    }
+  }
+
+  // Statistik setelah 100 percobaan
+  statistik();
+
+  // Tampilan akhir LCD
+  lcd.clear();
+
+  lcd.setCursor(0, 0);
+  lcd.print("S1 SELESAI");
+
+  lcd.setCursor(0, 1);
+  lcd.print("SUKSES:");
+  lcd.print(
+    100.0 * berhasil / JUMLAH,
+    1
+  );
+  lcd.print("%");
+
+  // Mencegah pengujian diulang
+  while (true) {
+    delay(1000);
+  }
+}

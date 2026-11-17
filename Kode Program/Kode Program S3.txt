@@ -1,0 +1,400 @@
+#include <WiFi.h>
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+#include <PubSubClient.h>
+#include <math.h>
+
+// Konfigurasi LCD I2C
+LiquidCrystal_I2C lcd(0x27, 16, 2);
+
+// Konfigurasi WiFi
+const char* ssid = "Wokwi-GUEST";
+const char* password = "";
+
+// Konfigurasi MQTT
+const char* broker = "test.mosquitto.org";
+const int port = 1883;
+const char* topic = "telkom/s3/monitoring";
+
+// Konfigurasi eksperimen
+#define JUMLAH_PESAN 100
+#define INTERVAL 2000
+#define TIMEOUT 5000
+#define PAYLOAD_SIZE 20
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+
+// Variabel eksperimen
+int berhasil = 0;
+int gagal = 0;
+int jumlahRTT = 0;
+
+float rssiData[JUMLAH_PESAN];
+float rttData[JUMLAH_PESAN];
+
+bool pesanDiterima = false;
+String tokenAktif = "";
+
+unsigned long tKirim = 0;
+unsigned long tTerima = 0;
+
+// Callback saat pesan echo diterima
+void callback(char* topicName, byte* payload,
+              unsigned int length) {
+
+  // Pastikan topic sesuai
+  if (strcmp(topicName, topic) != 0) {
+    return;
+  }
+
+  if (pesanDiterima || tokenAktif.length() == 0) {
+    return;
+  }
+
+  if (length != PAYLOAD_SIZE) {
+    return;
+  }
+
+  // Memeriksa token pesan
+  bool cocok = true;
+
+  for (unsigned int i = 0;
+       i < tokenAktif.length(); i++) {
+
+    if ((char)payload[i] != tokenAktif[i]) {
+      cocok = false;
+      break;
+    }
+  }
+
+  if (cocok) {
+    tTerima = millis();
+    pesanDiterima = true;
+  }
+}
+
+// Koneksi MQTT
+bool connectMQTT() {
+  String clientId = "ESP32-S3-" +
+                    String((uint32_t)ESP.getEfuseMac(), HEX);
+
+  if (client.connect(clientId.c_str())) {
+    return client.subscribe(topic, 0);
+  }
+
+  return false;
+}
+
+// Tampilan LCD
+void tampilkanLCD(int seq, float rtt, bool status) {
+  lcd.clear();
+
+  lcd.setCursor(0, 0);
+  lcd.print("SEQ: ");
+  lcd.print(seq);
+  lcd.print("/100");
+
+  lcd.setCursor(0, 1);
+
+  if (status) {
+    lcd.print("RTT:");
+    lcd.print(rtt, 0);
+    lcd.print("ms OK");
+  } else {
+    lcd.print("MQTT GAGAL");
+  }
+}
+
+// Menampilkan rekapitulasi hasil
+void tampilkanHasil() {
+  float totalRSSI = 0;
+  float minRSSI = rssiData[0];
+  float maxRSSI = rssiData[0];
+
+  for (int i = 0; i < JUMLAH_PESAN; i++) {
+    totalRSSI += rssiData[i];
+
+    if (rssiData[i] < minRSSI) {
+      minRSSI = rssiData[i];
+    }
+
+    if (rssiData[i] > maxRSSI) {
+      maxRSSI = rssiData[i];
+    }
+  }
+
+  float meanRSSI = totalRSSI / JUMLAH_PESAN;
+
+  Serial.println();
+  Serial.println("========== HASIL S3 ==========");
+  Serial.printf("Total pesan    : %d\n", JUMLAH_PESAN);
+  Serial.printf("Berhasil       : %d\n", berhasil);
+  Serial.printf("Gagal          : %d\n", gagal);
+
+  Serial.printf(
+    "PDR            : %.2f %%\n",
+    berhasil * 100.0 / JUMLAH_PESAN
+  );
+
+  if (jumlahRTT > 0) {
+    float totalRTT = 0;
+
+    for (int i = 0; i < jumlahRTT; i++) {
+      totalRTT += rttData[i];
+    }
+
+    float meanRTT = totalRTT / jumlahRTT;
+
+    // Urutkan data RTT
+    for (int i = 0; i < jumlahRTT - 1; i++) {
+      for (int j = i + 1; j < jumlahRTT; j++) {
+        if (rttData[i] > rttData[j]) {
+          float temp = rttData[i];
+          rttData[i] = rttData[j];
+          rttData[j] = temp;
+        }
+      }
+    }
+
+    // Median
+    float median;
+
+    if (jumlahRTT % 2 == 0) {
+      median = (
+        rttData[jumlahRTT / 2 - 1] +
+        rttData[jumlahRTT / 2]
+      ) / 2.0;
+    } else {
+      median = rttData[jumlahRTT / 2];
+    }
+
+    // Standar deviasi populasi
+    float variance = 0;
+
+    for (int i = 0; i < jumlahRTT; i++) {
+      variance += pow(rttData[i] - meanRTT, 2);
+    }
+
+    float stdDev = sqrt(variance / jumlahRTT);
+
+    // P95 nearest-rank
+    int indexP95 = (int)ceil(0.95 * jumlahRTT) - 1;
+    float p95 = rttData[indexP95];
+
+    Serial.printf("RTT Mean       : %.2f ms\n", meanRTT);
+    Serial.printf("RTT Median     : %.2f ms\n", median);
+    Serial.printf("RTT Std Dev    : %.2f ms\n", stdDev);
+    Serial.printf("RTT P95        : %.0f ms\n", p95);
+
+  } else {
+    Serial.println("RTT Mean       : Tidak tersedia");
+    Serial.println("RTT Median     : Tidak tersedia");
+    Serial.println("RTT Std Dev    : Tidak tersedia");
+    Serial.println("RTT P95        : Tidak tersedia");
+  }
+
+  Serial.println("--------------------------------");
+  Serial.println("STATISTIK RSSI");
+  Serial.printf("Jumlah pengukuran : %d\n", JUMLAH_PESAN);
+  Serial.printf("RSSI Mean         : %.2f dBm\n", meanRSSI);
+  Serial.printf("RSSI Minimum      : %.0f dBm\n", minRSSI);
+  Serial.printf("RSSI Maximum      : %.0f dBm\n", maxRSSI);
+  Serial.println("===============================");
+
+  // Tampilan akhir LCD
+  float pdr = berhasil * 100.0 / JUMLAH_PESAN;
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("S3 SELESAI");
+
+  lcd.setCursor(0, 1);
+  lcd.print("PDR:");
+  lcd.print(pdr, 0);
+  lcd.print("%");
+}
+
+// Setup
+void setup() {
+  Serial.begin(115200);
+
+  // Inisialisasi LCD
+  Wire.begin(21, 22);
+  lcd.init();
+  lcd.backlight();
+
+  lcd.setCursor(0, 0);
+  lcd.print("S3 MQTT QoS 0");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Payload: 20 B");
+
+  // Koneksi WiFi
+  WiFi.begin(ssid, password);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Connecting WiFi");
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
+
+  // Konfigurasi MQTT
+  client.setServer(broker, port);
+  client.setCallback(callback);
+  client.setBufferSize(256);
+  client.setKeepAlive(60);
+  client.setSocketTimeout(5);
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("WiFi Connected");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Connecting MQTT");
+
+  if (!connectMQTT()) {
+    Serial.println("MQTT connection failed!");
+
+    lcd.clear();
+    lcd.setCursor(0, 0);
+    lcd.print("MQTT FAILED");
+
+    while (true) {
+      delay(1000);
+    }
+  }
+
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("S3 MQTT QoS 0");
+
+  lcd.setCursor(0, 1);
+  lcd.print("Ready");
+
+  Serial.println(
+    "skenario,seq,payload_byte,t_kirim_ms,"
+    "t_terima_ms,rtt_ms,status,rssi_dbm"
+  );
+}
+
+// Loop eksperimen
+void loop() {
+  static bool selesai = false;
+
+  if (selesai) {
+    return;
+  }
+
+  for (int i = 0; i < JUMLAH_PESAN; i++) {
+    delay(INTERVAL);
+
+    float rssi = WiFi.RSSI();
+    rssiData[i] = rssi;
+
+    // Periksa koneksi MQTT
+    if (!client.connected()) {
+      if (!connectMQTT()) {
+        gagal++;
+
+        Serial.printf(
+          "S3,%d,%d,,,,GAGAL,%.0f\n",
+          i + 1,
+          PAYLOAD_SIZE,
+          rssi
+        );
+
+        tampilkanLCD(i + 1, 0, false);
+        continue;
+      }
+    }
+
+    // Membuat payload tepat 20 byte
+    tokenAktif = "S3-" + String(i + 1);
+    String payload = tokenAktif;
+
+    while (payload.length() < PAYLOAD_SIZE) {
+      payload += "X";
+    }
+
+    payload = payload.substring(0, PAYLOAD_SIZE);
+
+    // Persiapan pengukuran
+    pesanDiterima = false;
+    tTerima = 0;
+
+    // Waktu mulai pengiriman
+    tKirim = millis();
+
+    // Mengirim MQTT QoS 0
+    bool terkirim = client.publish(
+      topic,
+      payload.c_str(),
+      false
+    );
+
+    if (!terkirim) {
+      gagal++;
+
+      Serial.printf(
+        "S3,%d,%d,%lu,,,GAGAL,%.0f\n",
+        i + 1,
+        PAYLOAD_SIZE,
+        tKirim,
+        rssi
+      );
+
+      tampilkanLCD(i + 1, 0, false);
+      continue;
+    }
+
+    // Menunggu pesan echo diterima
+    unsigned long timeoutStart = millis();
+
+    while (!pesanDiterima &&
+           millis() - timeoutStart < TIMEOUT) {
+
+      client.loop();
+      delay(1);
+    }
+
+    if (pesanDiterima) {
+      float rtt = tTerima - tKirim;
+
+      berhasil++;
+
+      rttData[jumlahRTT] = rtt;
+      jumlahRTT++;
+
+      Serial.printf(
+        "S3,%d,%d,%lu,%lu,%.0f,BERHASIL,%.0f\n",
+        i + 1,
+        PAYLOAD_SIZE,
+        tKirim,
+        tTerima,
+        rtt,
+        rssi
+      );
+
+      tampilkanLCD(i + 1, rtt, true);
+
+    } else {
+      gagal++;
+
+      Serial.printf(
+        "S3,%d,%d,%lu,,,GAGAL,%.0f\n",
+        i + 1,
+        PAYLOAD_SIZE,
+        tKirim,
+        rssi
+      );
+
+      tampilkanLCD(i + 1, 0, false);
+    }
+  }
+
+  tampilkanHasil();
+  selesai = true;
+}
